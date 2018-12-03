@@ -7,6 +7,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.hendisantika.qrcode.qrcodegenweb.CreateAccountRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -36,6 +37,7 @@ import java.nio.file.Path;
  */
 
 @Controller
+@Slf4j
 public class QRCodeController {
     @Autowired
     private ResourceLoader resourceLoader;
@@ -45,14 +47,14 @@ public class QRCodeController {
             throws WriterException, IOException {
         String qrCodePath = writeQR(request);
         model.addAttribute("code", qrCodePath);
-        return "QRcode";
+        return "QRCode";
     }
 
     @GetMapping("/readQR")
     public String verifyQR(@RequestParam("qrImage") String qrImage, Model model) throws Exception {
         model.addAttribute("content", readQR(qrImage));
         model.addAttribute("code", qrImage);
-        return "QRcode";
+        return "QRCode";
 
     }
 
@@ -67,14 +69,14 @@ public class QRCodeController {
     }
 
     private String readQR(String qrImage) throws Exception {
-        final Resource fileResource = resourceLoader.getResource("classpath:static/" + qrImage);
+        final Resource fileResource = resourceLoader.getResource("classpath:static" + qrImage);
         File QRfile = fileResource.getFile();
         BufferedImage bufferedImg = ImageIO.read(QRfile);
         LuminanceSource source = new BufferedImageLuminanceSource(bufferedImg);
         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
         Result result = new MultiFormatReader().decode(bitmap);
-        System.out.println("Barcode Format: " + result.getBarcodeFormat());
-        System.out.println("Content: " + result.getText());
+        log.info("Barcode Format: " + result.getBarcodeFormat());
+        log.info("Content: " + result.getText());
         return result.getText();
 
     }

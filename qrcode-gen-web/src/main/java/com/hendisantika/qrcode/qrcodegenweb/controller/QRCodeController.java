@@ -65,7 +65,7 @@ public class QRCodeController {
 
     @GetMapping("/")
     public String index() {
-        return "index";
+        return "index2";
     }
 
     @PostMapping("/showQRCode")

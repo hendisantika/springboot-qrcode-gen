@@ -1,9 +1,17 @@
 package com.hendisantika.qrcode.qrcodegenweb.controller;
 
+import com.google.zxing.WriterException;
+import com.hendisantika.qrcode.qrcodegenweb.model.Student;
 import com.hendisantika.qrcode.qrcodegenweb.service.StudentService;
+import com.hendisantika.qrcode.qrcodegenweb.util.QRCodeGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,4 +28,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/students")
 public class StudentController {
     private final StudentService studentService;
+
+    @GetMapping
+    public ResponseEntity<List<Student>> getStudents() throws IOException, WriterException {
+        List<Student> students = studentService.getStudents();
+        if (students.size() != 0) {
+            for (Student student : students) {
+                QRCodeGenerator.generateQRCode(student);
+            }
+        }
+        return ResponseEntity.ok(studentService.getStudents());
+    }
 }

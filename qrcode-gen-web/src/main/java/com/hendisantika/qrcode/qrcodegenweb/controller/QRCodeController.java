@@ -7,8 +7,10 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.hendisantika.qrcode.qrcodegenweb.CreateAccountRequest;
+import com.hendisantika.qrcode.qrcodegenweb.service.QRCodeService;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
@@ -38,9 +41,11 @@ import java.nio.file.Path;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class QRCodeController {
-    @Autowired
-    private ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
+
+    private final QRCodeService qrCodeService;
 
     @PostMapping("/createAccount")
     public String createNewAccount(@ModelAttribute("request") CreateAccountRequest request, Model model)
@@ -56,6 +61,25 @@ public class QRCodeController {
         model.addAttribute("code", qrImage);
         return "QRCode";
 
+    }
+
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+
+    @PostMapping("/showQRCode")
+    public String showQRCode(String qrContent, Model model) {
+        model.addAttribute("qrCodeContent", "/generateQRCode?qrContent=" + qrContent);
+        return "show-qr-code";
+    }
+
+    @GetMapping("/generateQRCode")
+    public void generateQRCode(String qrContent, HttpServletResponse response) throws IOException {
+        response.setContentType("image/png");
+        byte[] qrCode = qrCodeService.generateQRCode(qrContent, 500, 500);
+        OutputStream outputStream = response.getOutputStream();
+        outputStream.write(qrCode);
     }
 
     private String writeQR(CreateAccountRequest request) throws WriterException, IOException {

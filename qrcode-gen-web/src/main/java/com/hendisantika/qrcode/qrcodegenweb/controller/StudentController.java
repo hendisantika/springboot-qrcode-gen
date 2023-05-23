@@ -42,4 +42,9 @@ public class StudentController {
     public Student addStudent(@RequestBody Student student) {
         return studentService.addStudent(student);
     }
+
+    @GetMapping("/{id}")
+    public Student findById(@PathVariable("id") Long id) {
+        return studentService.findById(id);
+    }
 }

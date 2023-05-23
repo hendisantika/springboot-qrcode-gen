@@ -6,9 +6,7 @@ import com.hendisantika.qrcode.qrcodegenweb.service.StudentService;
 import com.hendisantika.qrcode.qrcodegenweb.util.QRCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,5 +36,10 @@ public class StudentController {
             }
         }
         return ResponseEntity.ok(studentService.getStudents());
+    }
+
+    @PostMapping
+    public Student addStudent(@RequestBody Student student) {
+        return studentService.addStudent(student);
     }
 }

@@ -24,7 +24,7 @@ import java.nio.file.Path;
 public class QRCodeGenerator {
     public static void generateQRCode(Student student) throws WriterException, IOException {
         String userHomeDir = System.getProperty("user.home");
-        String qrCodePath = userHomeDir + "/Desktop/QRCode";
+        String qrCodePath = "/Users/hendisantika/Desktop/QRCode";
         String qrCodeName = qrCodePath + student.getFirstName() + student.getId() + "-QRCODE.png";
         var qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(
